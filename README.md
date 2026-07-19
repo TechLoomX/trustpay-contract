@@ -58,7 +58,7 @@ Generates (or reuses) a funded testnet identity named `trustpay-deployer`,
 builds the contract, and deploys it to Stellar testnet. Copy the printed
 contract ID into the placeholder below.
 
-**Testnet contract ID:** `TBD`
+**Testnet contract ID:** `CCPOUXHJT3D7EKM44ASLS442QSNRF6IKCMIAI466FSCYMA6BWKDHHFR2`
 
 ## Repo layout
 
