@@ -88,7 +88,11 @@ impl EscrowContract {
         }
 
         let token_client = token::Client::new(&env, &escrow.token);
-        token_client.transfer(&escrow.client, &env.current_contract_address(), &milestone.amount);
+        token_client.transfer(
+            &escrow.client,
+            env.current_contract_address(),
+            &milestone.amount,
+        );
 
         milestone.status = MilestoneStatus::Funded;
         let amount = milestone.amount;
@@ -137,17 +141,22 @@ impl EscrowContract {
         }
 
         let token_client = token::Client::new(&env, &escrow.token);
-        token_client.transfer(&env.current_contract_address(), &escrow.freelancer, &milestone.amount);
+        token_client.transfer(
+            &env.current_contract_address(),
+            &escrow.freelancer,
+            &milestone.amount,
+        );
 
         milestone.status = MilestoneStatus::Released;
         let amount = milestone.amount;
         escrow.milestones.set(milestone_index, milestone);
 
-        if escrow
-            .milestones
-            .iter()
-            .all(|m| matches!(m.status, MilestoneStatus::Released | MilestoneStatus::Refunded))
-        {
+        if escrow.milestones.iter().all(|m| {
+            matches!(
+                m.status,
+                MilestoneStatus::Released | MilestoneStatus::Refunded
+            )
+        }) {
             escrow.status = EscrowStatus::Completed;
         }
 
@@ -182,7 +191,10 @@ impl EscrowContract {
         }
 
         let mut milestone = Self::milestone_at(&escrow, milestone_index)?;
-        if !matches!(milestone.status, MilestoneStatus::Funded | MilestoneStatus::Submitted) {
+        if !matches!(
+            milestone.status,
+            MilestoneStatus::Funded | MilestoneStatus::Submitted
+        ) {
             return Err(Error::InvalidStatus);
         }
 
@@ -210,7 +222,11 @@ impl EscrowContract {
         }
 
         let token_client = token::Client::new(&env, &escrow.token);
-        token_client.transfer(&env.current_contract_address(), &escrow.client, &milestone.amount);
+        token_client.transfer(
+            &env.current_contract_address(),
+            &escrow.client,
+            &milestone.amount,
+        );
 
         milestone.status = MilestoneStatus::Refunded;
         escrow.milestones.set(milestone_index, milestone);
@@ -261,7 +277,11 @@ impl EscrowContract {
         Self::load_escrow(&env, escrow_id)
     }
 
-    pub fn get_milestone(env: Env, escrow_id: u64, milestone_index: u32) -> Result<Milestone, Error> {
+    pub fn get_milestone(
+        env: Env,
+        escrow_id: u64,
+        milestone_index: u32,
+    ) -> Result<Milestone, Error> {
         let escrow = Self::load_escrow(&env, escrow_id)?;
         Self::milestone_at(&escrow, milestone_index)
     }
