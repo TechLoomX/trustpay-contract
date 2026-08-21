@@ -43,6 +43,6 @@ pub struct Escrow {
 
 #[contracttype]
 pub enum DataKey {
-    Escrow(u64), // escrow_id -> Escrow
+    Escrow(u64),  // escrow_id -> Escrow
     NextEscrowId, // counter
 }

@@ -209,7 +209,7 @@ fn test_dispute_by_stranger_returns_not_authorized() {
         .try_raise_dispute(&escrow_id, &0, &stranger)
         .unwrap_err()
         .unwrap();
-    assert_eq!(res, Error::NotAuthorized.into());
+    assert_eq!(res, Error::NotAuthorized);
 }
 
 #[test]
@@ -228,18 +228,26 @@ fn test_invalid_transitions() {
     );
 
     // approve without submit
-    let res = s.contract.try_approve_milestone(&escrow_id, &0).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    let res = s
+        .contract
+        .try_approve_milestone(&escrow_id, &0)
+        .unwrap_err()
+        .unwrap();
+    assert_eq!(res, Error::InvalidStatus);
 
     // submit without deposit
-    let res = s.contract.try_submit_milestone(&escrow_id, &0).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    let res = s
+        .contract
+        .try_submit_milestone(&escrow_id, &0)
+        .unwrap_err()
+        .unwrap();
+    assert_eq!(res, Error::InvalidStatus);
 
     s.contract.deposit(&escrow_id, &0);
 
     // deposit twice
     let res = s.contract.try_deposit(&escrow_id, &0).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    assert_eq!(res, Error::InvalidStatus);
 }
 
 #[test]
@@ -264,11 +272,15 @@ fn test_dispute_freeze() {
     let milestone = s.contract.get_milestone(&escrow_id, &0);
     assert_eq!(milestone.status, MilestoneStatus::Disputed);
 
-    let res = s.contract.try_approve_milestone(&escrow_id, &0).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    let res = s
+        .contract
+        .try_approve_milestone(&escrow_id, &0)
+        .unwrap_err()
+        .unwrap();
+    assert_eq!(res, Error::InvalidStatus);
 
     let res = s.contract.try_refund(&escrow_id, &0).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    assert_eq!(res, Error::InvalidStatus);
 }
 
 #[test]
@@ -295,7 +307,10 @@ fn test_cancel_with_mixed_milestone_states() {
     assert_eq!(s.token.balance(&s.client), 1_000_000);
     let escrow = s.contract.get_escrow(&escrow_id);
     assert_eq!(escrow.status, EscrowStatus::Cancelled);
-    assert_eq!(escrow.milestones.get(1).unwrap().status, MilestoneStatus::Refunded);
+    assert_eq!(
+        escrow.milestones.get(1).unwrap().status,
+        MilestoneStatus::Refunded
+    );
 }
 
 #[test]
@@ -316,6 +331,10 @@ fn test_cancel_fails_if_submitted() {
     s.contract.deposit(&escrow_id, &0);
     s.contract.submit_milestone(&escrow_id, &0);
 
-    let res = s.contract.try_cancel_escrow(&escrow_id).unwrap_err().unwrap();
-    assert_eq!(res, Error::InvalidStatus.into());
+    let res = s
+        .contract
+        .try_cancel_escrow(&escrow_id)
+        .unwrap_err()
+        .unwrap();
+    assert_eq!(res, Error::InvalidStatus);
 }
